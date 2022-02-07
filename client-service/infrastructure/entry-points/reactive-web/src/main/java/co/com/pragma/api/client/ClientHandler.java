@@ -16,6 +16,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromObject
 public class ClientHandler {
 
     private final ClientUseCase clientUseCase;
+
     private final ClientHandlerMapper clientHandlerMapper;
 
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {

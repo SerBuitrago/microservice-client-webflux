@@ -3,6 +3,7 @@ package co.com.pragma.mongo.adapter.impl;
 import co.com.pragma.model.client.Client;
 import co.com.pragma.model.client.gateways.ClientRepository;
 import co.com.pragma.mongo.adapter.ClientRepositoryAdapter;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public class ClientRepositoryAdapterImpl implements ClientRepository {
 
     private final ClientRepositoryAdapter clientRepositoryAdapter;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientRepositoryAdapterImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(ClientRepositoryAdapterImpl.class);
 
     @Override
     public Mono<Client> findById(String id) {

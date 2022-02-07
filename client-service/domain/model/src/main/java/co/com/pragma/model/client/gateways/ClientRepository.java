@@ -8,11 +8,11 @@ public interface ClientRepository {
 
     Mono<Client> findById(String id);
 
-    Mono<Client> findByTypeDocumentAndDocument(String typeDocument, Long document);
+    Mono<Client> findByTypeDocumentAndDocument(String typeDocument, String document);
 
     Flux<Client> findAll();
 
-    Flux<Client> findByAgeAll(Integer age);
+    Flux<Client> findByAgeAll(String age);
 
     Mono<Client> save(Client client);
 

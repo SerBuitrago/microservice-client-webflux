@@ -25,7 +25,7 @@ public class ClientRepositoryAdapterImpl implements ClientRepository {
     }
 
     @Override
-    public Mono<Client> findByTypeDocumentAndDocument(String typeDocument, Long document) {
+    public Mono<Client> findByTypeDocumentAndDocument(String typeDocument, String document) {
         return null;
     }
 
@@ -36,7 +36,7 @@ public class ClientRepositoryAdapterImpl implements ClientRepository {
     }
 
     @Override
-    public Flux<Client> findByAgeAll(Integer age) {
+    public Flux<Client> findByAgeAll(String age) {
         return null;
     }
 

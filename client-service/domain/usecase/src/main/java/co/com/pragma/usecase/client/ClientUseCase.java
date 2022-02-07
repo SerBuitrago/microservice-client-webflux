@@ -15,7 +15,7 @@ public class ClientUseCase{
         return clientRepository.findById(id);
     }
 
-    public Mono<Client> findByTypeDocumentAndDocument(String typeDocument, Long document) {
+    public Mono<Client> findByTypeDocumentAndDocument(String typeDocument, String document) {
         return clientRepository.findByTypeDocumentAndDocument(typeDocument, document);
     }
 
@@ -23,7 +23,7 @@ public class ClientUseCase{
         return clientRepository.findAll();
     }
 
-    public Flux<Client> findByAgeAll(Integer age) {
+    public Flux<Client> findByAgeAll(String age) {
         return clientRepository.findByAgeAll(age);
     }
 

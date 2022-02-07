@@ -11,10 +11,16 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration
 public class ClientRouterRest {
 
-    private final String pathClient = "/api/client";
+    public static final String pathClient = "/api/client";
 
     @Bean
     public RouterFunction<ServerResponse> routerFunction(ClientHandler handler) {
-        return route(GET(pathClient.concat("/{id}")), handler::findById);
+        return route(GET(pathClient.concat("/{id}")), handler::findById)
+                .andRoute(GET(pathClient.concat("/find/type/{type}/document/{document}")), handler::findByTypeDocumentAndDocument)
+                .andRoute(GET(pathClient), handler::findAll)
+                .andRoute(GET(pathClient.concat("/all/find/age/{age}")), handler::findByAgeAll)
+                .andRoute(POST(pathClient), handler::save)
+                .andRoute(PUT(pathClient), handler::update)
+                .andRoute(DELETE(pathClient.concat("/{id}")), handler::deleteById);
     }
 }

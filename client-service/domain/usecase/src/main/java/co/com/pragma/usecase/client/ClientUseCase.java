@@ -42,7 +42,7 @@ public class ClientUseCase implements ClientRepository {
     }
 
     @Override
-    public Mono<Void> deleteById(Client client) {
-        return clientRepositoryGateway.deleteById(client);
+    public Mono<Void> deleteById(String id) {
+        return clientRepositoryGateway.deleteById(id);
     }
 }

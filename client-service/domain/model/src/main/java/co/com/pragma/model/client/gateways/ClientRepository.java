@@ -18,6 +18,6 @@ public interface ClientRepository {
 
     Mono<Client> update(Client client);
 
-    Mono<Void> deleteById(Client client);
+    Mono<Void> deleteById(String id);
 
 }

@@ -7,42 +7,35 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class ClientUseCase implements ClientRepository {
+public class ClientUseCase{
 
-    private final ClientRepository clientRepositoryGateway;
+    private final ClientRepository clientRepository;
 
-    @Override
     public Mono<Client> findById(String id) {
-        return clientRepositoryGateway.findById(id);
+        return clientRepository.findById(id);
     }
 
-    @Override
     public Mono<Client> findByTypeDocumentAndDocument(String typeDocument, Long document) {
-        return clientRepositoryGateway.findByTypeDocumentAndDocument(typeDocument, document);
+        return clientRepository.findByTypeDocumentAndDocument(typeDocument, document);
     }
 
-    @Override
     public Flux<Client> findAll() {
-        return clientRepositoryGateway.findAll();
+        return clientRepository.findAll();
     }
 
-    @Override
     public Flux<Client> findByAgeAll(Integer age) {
-        return clientRepositoryGateway.findByAgeAll(age);
+        return clientRepository.findByAgeAll(age);
     }
 
-    @Override
     public Mono<Client> save(Client client) {
-        return clientRepositoryGateway.save(client);
+        return clientRepository.save(client);
     }
 
-    @Override
     public Mono<Client> update(Client client) {
-        return clientRepositoryGateway.update(client);
+        return clientRepository.update(client);
     }
 
-    @Override
     public Mono<Void> deleteById(String id) {
-        return clientRepositoryGateway.deleteById(id);
+        return clientRepository.deleteById(id);
     }
 }

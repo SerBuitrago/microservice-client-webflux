@@ -2,7 +2,7 @@ package co.com.pragma.infrastructure.driven.adapter;
 
 import co.com.pragma.application.gateway.ImageGateway;
 import co.com.pragma.domain.Image;
-import co.com.pragma.infrastructure.driven.mapper.ImageAdapterMapper;
+import co.com.pragma.infrastructure.driven.mapper.ImageDrivenMapper;
 import co.com.pragma.infrastructure.persistence.document.ImageDocument;
 import co.com.pragma.infrastructure.persistence.repository.ImageRespository;
 
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 public class ImageRepositoryAdapter implements ImageGateway {
 
     private final ImageRespository imageRespository;
-    private final ImageAdapterMapper imageAdapterMapper;
+    private final ImageDrivenMapper imageAdapterMapper;
 
     private final static Logger logger = LoggerFactory.getLogger(ImageRepositoryAdapter.class);
 
@@ -42,6 +42,7 @@ public class ImageRepositoryAdapter implements ImageGateway {
     public Flux<Image> findAll() {
         return imageRespository
                 .findAll()
+                .doOnNext(image -> logger.info(image.toString()))
                 .flatMap(imageAdapterMapper::toDomain);
     }
 
@@ -49,7 +50,7 @@ public class ImageRepositoryAdapter implements ImageGateway {
     public Mono<Image> save(Image image) {
         return Mono.just(image)
                 .flatMap(imageAdapterMapper::toDocument)
-                .flatMap(imageDocument -> imageRespository.save(imageDocument))
+                .flatMap(imageRespository::save)
                 .defaultIfEmpty(new ImageDocument())
                 .flatMap(imageSave -> {
                     if(imageSave.getId() == null)

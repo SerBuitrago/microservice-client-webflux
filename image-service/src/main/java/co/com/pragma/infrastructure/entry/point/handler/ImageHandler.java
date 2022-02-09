@@ -4,7 +4,6 @@ import java.net.URI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.Part;
@@ -12,21 +11,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import co.com.pragma.infrastructure.driven.adapter.ImageRepositoryAdapter;
+import co.com.pragma.application.usecase.ImageUseCase;
 import co.com.pragma.infrastructure.entry.mapper.ImageEntryMapper;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import static co.com.pragma.infrastructure.entry.point.router.ImageRouter.path;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
+@RequiredArgsConstructor
 @Component
 public class ImageHandler {
 
-	@Autowired
-	private ImageRepositoryAdapter imageUseCase;
-	
-	@Autowired
-	private ImageEntryMapper hanlderMapper;
+	private final ImageUseCase imageUseCase;
+	private final ImageEntryMapper hanlderMapper;
 	
 	public final static String FILE_NAME = "file";
 	public final static Logger LOGGER = LoggerFactory.getLogger(ImageHandler.class);

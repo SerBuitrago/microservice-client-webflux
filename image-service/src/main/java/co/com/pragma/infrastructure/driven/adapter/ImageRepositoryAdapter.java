@@ -2,7 +2,6 @@ package co.com.pragma.infrastructure.driven.adapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.com.pragma.application.gateway.ImageGateway;
@@ -10,17 +9,16 @@ import co.com.pragma.domain.Image;
 import co.com.pragma.infrastructure.driven.mapper.ImageDrivenMapper;
 import co.com.pragma.infrastructure.persistence.document.ImageDocument;
 import co.com.pragma.infrastructure.persistence.repository.ImageRespository;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@RequiredArgsConstructor
 @Service
 public class ImageRepositoryAdapter implements ImageGateway {
 	
-	@Autowired
-	private ImageRespository imageRespository;
-	
-	@Autowired
-	private ImageDrivenMapper imageDrivenMapper;
+	private final ImageRespository imageRespository;
+	private final ImageDrivenMapper imageDrivenMapper;
 		
 	public final static Logger logger = LoggerFactory.getLogger(ImageRepositoryAdapter.class);
 

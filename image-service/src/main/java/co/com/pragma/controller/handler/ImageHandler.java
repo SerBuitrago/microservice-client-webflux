@@ -1,19 +1,18 @@
 package co.com.pragma.controller.handler;
 
 import java.net.URI;
-import java.util.Base64;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import co.com.pragma.mapper.entry.ImageEntryMapper;
-import co.com.pragma.models.dto.ImageDto;
 import co.com.pragma.models.service.impl.ImageRepositoryAdapter;
 import reactor.core.publisher.Mono;
 
@@ -28,9 +27,9 @@ public class ImageHandler {
 	
 	@Autowired
 	private ImageEntryMapper hanlderMapper;
-
 	
-	private final static Logger logger = LoggerFactory.getLogger(ImageHandler.class);
+	public final static String FILE_NAME = "file";
+	public final static Logger LOGGER = LoggerFactory.getLogger(ImageHandler.class);
 
 	@SuppressWarnings("deprecation")
 	public Mono<ServerResponse> findById(ServerRequest serverRequest) {
@@ -54,30 +53,23 @@ public class ImageHandler {
 	public Mono<ServerResponse> save(ServerRequest serverRequest) {
 		return serverRequest
 				.multipartData()
-				.map(multipart -> multipart.toSingleValueMap().get("file"))
-				.cast(FilePart.class)
-				.flatMap(file -> {
-					if(file == null) return Mono.error(new Exception("No se ha recibido la imagen"));
-					return Mono
-							.just(new ImageDto())
-							.flatMap(imageDto -> {	
-								FileHandler fileHandler = new FileHandler();
-								imageDto.setContent(Base64.getEncoder().encodeToString(fileHandler.getLines(file).toProcessor().block()));
-							 	imageDto.setFilename(file.filename());
-							 	imageDto.setContentType(file.headers().getContentType().toString());
-							 	return Mono.just(imageDto);
-							});	
-				}).flatMap(hanlderMapper::toDomain)
-				.flatMap(imageDomain -> 
-					imageUseCase.save(imageDomain)
-					 .flatMap(hanlderMapper::toDto)
-					 .flatMap(imageSave -> 
-							ServerResponse.created(URI.create(path.concat("/").concat(imageSave.getId())))
-							 .contentType(MediaType.APPLICATION_JSON_UTF8)
-							 .body(fromObject(imageSave))
-					)
-				).onErrorResume(error -> {
-					logger.error(error.getMessage());
+				.flatMap(multipart -> {
+					 Part part = multipart.toSingleValueMap().get(FILE_NAME);
+					 if(part == null || part.content() == null)
+						  return Mono.error(new Exception("No se ha recibido la imagen."));
+					 return Mono.just(part)
+							 	.cast(FilePart.class)
+							 	.flatMap(file -> {
+							 		FileHandler fileHandler = new FileHandler();
+									return fileHandler.fileToImage(file);
+							 	})
+							 	.flatMap(hanlderMapper::toDomain)
+							 	.flatMap(imageDomain -> 
+							 			imageUseCase.save(imageDomain)
+							 			            .flatMap(hanlderMapper::toDto)
+							 			            .flatMap(imageSave -> ServerResponse.created(URI.create(path.concat("/").concat(imageSave.getId()))).contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(imageSave))));
+				}).onErrorResume(error -> {
+					LOGGER.error(error.getMessage());
 					return ServerResponse.notFound().build();
 				});
 	}

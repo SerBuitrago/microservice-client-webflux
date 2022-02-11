@@ -1,8 +1,0 @@
-server:
-  port: 8091
-spring:
-  application:
-    name: image-service
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/${spring.application.name}

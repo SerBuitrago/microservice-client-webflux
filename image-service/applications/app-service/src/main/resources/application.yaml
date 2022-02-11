@@ -1,0 +1,12 @@
+server:
+  port: 8091
+spring:
+  application:
+    name: image-service
+  devtools:
+    add-properties: false
+  profiles:
+    include: null
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/${spring.application.name}

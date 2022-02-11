@@ -1,6 +1,6 @@
-package co.com.pragma.api.handler;
+package co.com.pragma.api.point.handler;
 
-import co.com.pragma.api.dto.ImageDto;
+import co.com.pragma.api.point.dto.ImageDto;
 
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;

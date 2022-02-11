@@ -1,7 +1,7 @@
-package co.com.pragma.api.client;
+package co.com.pragma.api.point.handler;
 
-import co.com.pragma.data.dto.ClientDto;
-import co.com.pragma.data.mapper.ClientHandlerMapper;
+import co.com.pragma.api.point.dto.ClientDto;
+import co.com.pragma.api.mapper.ClientEntryMapper;
 import co.com.pragma.usecase.client.ClientUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
-import static co.com.pragma.api.client.ClientRouterRest.pathClient;
+import static co.com.pragma.api.point.router.ClientRouter.pathClient;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
 @Component
@@ -26,7 +26,7 @@ public class ClientHandler {
 
     private final ClientUseCase clientUseCase;
 
-    private final ClientHandlerMapper clientHandlerMapper;
+    private final ClientEntryMapper clientHandlerMapper;
 
     private final Validator validator;
 

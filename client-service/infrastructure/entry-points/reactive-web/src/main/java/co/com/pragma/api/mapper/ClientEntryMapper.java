@@ -1,11 +1,11 @@
-package co.com.pragma.data.mapper;
+package co.com.pragma.api.mapper;
 
-import co.com.pragma.data.dto.ClientDto;
+import co.com.pragma.api.point.dto.ClientDto;
 import co.com.pragma.model.client.Client;
 
 import reactor.core.publisher.Mono;
 
-public interface ClientHandlerMapper {
+public interface ClientEntryMapper {
 
     Mono<Client> toDocument(ClientDto clientDto);
 

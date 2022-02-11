@@ -1,6 +1,6 @@
 package co.com.pragma.api.mapper;
 
-import co.com.pragma.api.dto.ImageDto;
+import co.com.pragma.api.point.dto.ImageDto;
 import co.com.pragma.model.image.Image;
 
 import reactor.core.publisher.Mono;

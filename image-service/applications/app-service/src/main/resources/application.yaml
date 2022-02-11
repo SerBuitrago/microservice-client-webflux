@@ -2,7 +2,7 @@ server:
   port: 8091
 spring:
   application:
-    name: "image-service"
+    name: image-service
   devtools:
     add-properties: false
   profiles:

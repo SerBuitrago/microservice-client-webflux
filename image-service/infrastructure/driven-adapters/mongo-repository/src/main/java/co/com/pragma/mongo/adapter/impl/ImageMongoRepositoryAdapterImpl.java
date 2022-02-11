@@ -19,7 +19,7 @@ public class ImageMongoRepositoryAdapterImpl implements ImageGateway {
 
     private final ImageMongoRepositoryAdapter imageMongoRepositoryAdapter;
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(ImageMongoRepositoryAdapterImpl.class);
+    public static Logger LOGGER = LoggerFactory.getLogger(ImageMongoRepositoryAdapterImpl.class);
 
     @Override
     public Mono<Image> findById(String id) {

@@ -1,5 +1,6 @@
-package co.com.pragma.api.client;
+package co.com.pragma.api.point.router;
 
+import co.com.pragma.api.point.handler.ClientHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -9,7 +10,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Configuration
-public class ClientRouterRest {
+public class ClientRouter {
 
     public static final String pathClient = "/api/client";
 

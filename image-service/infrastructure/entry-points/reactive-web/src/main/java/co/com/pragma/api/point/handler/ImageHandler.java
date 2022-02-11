@@ -1,4 +1,4 @@
-package co.com.pragma.api.handler;
+package co.com.pragma.api.point.handler;
 
 import co.com.pragma.api.mapper.ImageEntryMapper;
 import co.com.pragma.usecase.image.ImageUseCase;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
-import static co.com.pragma.api.router.ImageRouter.path;
+import static co.com.pragma.api.point.router.ImageRouter.path;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
 @RequiredArgsConstructor

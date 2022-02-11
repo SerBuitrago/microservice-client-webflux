@@ -1,11 +1,11 @@
-package co.com.pragma.data.mapper.impl;
+package co.com.pragma.api.mapper.impl;
 
-import co.com.pragma.data.dto.ClientDto;
-import co.com.pragma.data.mapper.ClientHandlerMapper;
+import co.com.pragma.api.point.dto.ClientDto;
+import co.com.pragma.api.mapper.ClientEntryMapper;
 import co.com.pragma.model.client.Client;
 import reactor.core.publisher.Mono;
 
-public class ClientHandlerMapperImpl implements ClientHandlerMapper {
+public class ClientEntryMapperImpl implements ClientEntryMapper {
     @Override
     public Mono<Client> toDocument(ClientDto clientDto) {
         return Mono.just(clientDto)

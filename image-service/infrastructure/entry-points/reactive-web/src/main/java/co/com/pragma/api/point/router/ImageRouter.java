@@ -1,6 +1,6 @@
-package co.com.pragma.api.router;
+package co.com.pragma.api.point.router;
 
-import co.com.pragma.api.handler.ImageHandler;
+import co.com.pragma.api.point.handler.ImageHandler;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

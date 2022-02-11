@@ -1,4 +1,4 @@
-package co.com.pragma.data.dto;
+package co.com.pragma.api.point.dto;
 
 import co.com.pragma.model.TypeDocument;
 import lombok.AllArgsConstructor;

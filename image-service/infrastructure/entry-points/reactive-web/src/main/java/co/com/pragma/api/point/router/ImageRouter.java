@@ -14,13 +14,20 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration
 public class ImageRouter {
 
-    public static final String path = "/api/image";
+    public static final String PATH = "/api/image";
+
+    public static final String FIND_BY_ID = PATH.concat("/{id}");
+    public static final String FIND_ALL = PATH;
+    public static final String SAVE = PATH;
+    public static final String UPDATE_BY_ID = PATH.concat("/{id}");
+    public static final String DELETE_BY_ID = PATH.concat("/{id}");
 
     @Bean
     public RouterFunction<ServerResponse> router(ImageHandler handler) {
-        return route(GET(path.concat("/{id}")), handler::findById)
-                .andRoute(GET(path), handler::findAll)
-                .andRoute(POST(path), handler::save)
-                .andRoute(DELETE(path.concat("/{id}")), handler::deleteById);
+        return route(GET(FIND_BY_ID), handler::findById)
+                .andRoute(GET(FIND_ALL), handler::findAll)
+                .andRoute(POST(SAVE), handler::save)
+                .andRoute(PUT(UPDATE_BY_ID), handler::update)
+                .andRoute(DELETE(DELETE_BY_ID), handler::deleteById);
     }
 }

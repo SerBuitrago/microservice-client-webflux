@@ -37,26 +37,41 @@ public class ImageMongoRepositoryAdapterImpl implements ImageGateway {
     @Override
     public Flux<Image> findAll() {
         return  imageMongoRepositoryAdapter
-                .findAll()
-                .doOnNext(image -> LOGGER.info(image.toString()));
+                .findAll();
     }
 
     @Override
     public Mono<Image> save(Image image) {
         return Mono.just(image)
+                .flatMap(this::update)
                 .flatMap(imageMongoRepositoryAdapter::save)
                 .defaultIfEmpty(new Image())
-                .flatMap(imageSave -> {
-                    if(imageSave.getId() == null)
-                        return Mono.error(new Exception("No se ha ".concat(" ").concat(" imagen.")));
-                    return Mono.just(imageSave);
+                .flatMap(imageAction -> {
+                    if(imageAction.getId() == null)
+                        return Mono.error(new Exception("No se ha ".concat(messageSaveOrUpdate(image).block()).concat(" imagen.")));
+                    return Mono.just(imageAction);
                 });
     }
 
     @Override
     public Mono<Void> deleteById(String id) {
         return findById(id)
-                .then(imageMongoRepositoryAdapter.deleteById(id).then())
-                .onErrorResume(Mono::error);
+                .then(imageMongoRepositoryAdapter.deleteById(id).then());
+    }
+
+    protected Mono<Image> update(Image image){
+        return Mono.just(image)
+                .defaultIfEmpty(new Image())
+                .flatMap(imageUpdate -> {
+                    if(imageUpdate.getId() == null)
+                        return Mono.just(imageUpdate);
+                    return findById(imageUpdate.getId()).map(imageFindById -> image);
+                });
+    }
+
+    protected Mono<String> messageSaveOrUpdate(Image image){
+        return Mono.just(image)
+                .defaultIfEmpty(new Image())
+                .map(imageValidate -> imageValidate.getId() != null ? "actualizado" : "regsitrado");
     }
 }

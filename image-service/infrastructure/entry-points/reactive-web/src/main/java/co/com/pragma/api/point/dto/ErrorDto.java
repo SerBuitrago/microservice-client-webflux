@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ImageDto {
-    private String id;
-    private String filename;
-    private String contentType;
-    private String content;
+public class ErrorDto {
+    private String message;
+    private Integer code;
+    private Integer lineNumber;
+    private String fileName;
+    private String methodName;
+    private String className;
 }

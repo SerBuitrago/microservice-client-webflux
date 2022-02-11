@@ -1,6 +1,8 @@
 package co.com.pragma.api.point.handler;
 
 import co.com.pragma.api.mapper.ImageEntryMapper;
+import co.com.pragma.api.mapper.ImageErrorEntryMapper;
+import co.com.pragma.api.point.dto.ErrorDto;
 import co.com.pragma.usecase.image.ImageUseCase;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
-import static co.com.pragma.api.point.router.ImageRouter.path;
+import static co.com.pragma.api.point.router.ImageRouter.PATH;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
 @RequiredArgsConstructor
@@ -26,33 +28,59 @@ import static org.springframework.web.reactive.function.BodyInserters.fromObject
 public class ImageHandler {
 
     private final ImageUseCase imageUseCase;
-    private final ImageEntryMapper hanlderMapper;
+    private final ImageEntryMapper imageMapper;
+    private final ImageErrorEntryMapper imageErrorMapper;
 
     public final static String FILE_NAME = "file";
+    public final static String ID_IMAGE = "id";
+
     public final static Logger LOGGER = LoggerFactory.getLogger(ImageHandler.class);
 
     @SuppressWarnings("deprecation")
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
         return imageUseCase
                 .findById(serverRequest.pathVariable("id"))
-                .flatMap(hanlderMapper::toDto)
+                .flatMap(imageMapper::toDto)
                 .flatMap(image -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(image)))
-                .onErrorResume(error -> ServerResponse.notFound().build());
+                .onErrorResume(error -> {
+                    ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
+                    LOGGER.error(errorDto.toString());
+                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                });
     }
 
     @SuppressWarnings("deprecation")
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
         return imageUseCase
                 .findAll()
-                .flatMap(hanlderMapper::toDto)
+                .flatMap(imageMapper::toDto)
                 .collectList()
                 .flatMap(images -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(images)));
     }
 
     @SuppressWarnings("deprecation")
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
-        return serverRequest
-                .multipartData()
+        return saveOrUpdate(serverRequest, null);
+    }
+
+    @SuppressWarnings("deprecation")
+    public Mono<ServerResponse> update(ServerRequest serverRequest) {
+        return saveOrUpdate(serverRequest, serverRequest.pathVariable(ID_IMAGE));
+    }
+
+    public Mono<ServerResponse> deleteById(ServerRequest serverRequest) {
+        return imageUseCase
+                .deleteById(serverRequest.pathVariable("id"))
+                .flatMap(response -> ServerResponse.noContent().build())
+                .onErrorResume(error -> {
+                    ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
+                    LOGGER.error(errorDto.toString());
+                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                });
+    }
+
+    protected Mono<ServerResponse> saveOrUpdate(ServerRequest serverRequest, String id){
+        return  serverRequest.multipartData()
                 .flatMap(multipart -> {
                     Part part = multipart.toSingleValueMap().get(FILE_NAME);
                     if(part == null || part.content() == null)
@@ -61,23 +89,28 @@ public class ImageHandler {
                             .cast(FilePart.class)
                             .flatMap(file -> {
                                 FileHandler fileHandler = new FileHandler();
-                                return fileHandler.fileToImage(file);
+                                return fileHandler.fileToImage(file, id);
                             })
-                            .flatMap(hanlderMapper::toDomain)
+                            .flatMap(imageMapper::toDomain)
                             .flatMap(imageDomain ->
                                     imageUseCase.save(imageDomain)
-                                            .flatMap(hanlderMapper::toDto)
-                                            .flatMap(imageSave -> ServerResponse.created(URI.create(path.concat("/").concat(imageSave.getId()))).contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(imageSave))));
-                }).onErrorResume(error -> {
-                    LOGGER.error(error.getMessage());
-                    return ServerResponse.notFound().build();
-                });
-    }
+                                            .flatMap(imageMapper::toDto)
+                                            .flatMap(imageSave -> {
+                                                if(id == null)
+                                                    return ServerResponse
+                                                            .created(URI.create(PATH.concat("/").concat(imageSave.getId())))
+                                                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                            .body(fromObject(imageSave));
+                                                return ServerResponse
+                                                        .ok()
+                                                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                        .body(fromObject(imageSave));
+                                            }));
 
-    public Mono<ServerResponse> deleteById(ServerRequest serverRequest) {
-        return imageUseCase
-                .deleteById(serverRequest.pathVariable("id"))
-                .flatMap(response -> ServerResponse.noContent().build())
-                .onErrorResume(error -> ServerResponse.notFound().build());
-    }
+                }) .onErrorResume(error -> {
+                    ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
+                    LOGGER.error(errorDto.toString());
+                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                });
+         }
 }

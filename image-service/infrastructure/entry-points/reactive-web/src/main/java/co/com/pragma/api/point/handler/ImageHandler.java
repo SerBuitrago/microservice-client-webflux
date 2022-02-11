@@ -1,6 +1,8 @@
 package co.com.pragma.api.point.handler;
 
 import co.com.pragma.api.mapper.ImageEntryMapper;
+import co.com.pragma.api.mapper.ImageErrorEntryMapper;
+import co.com.pragma.api.point.dto.ErrorDto;
 import co.com.pragma.usecase.image.ImageUseCase;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,8 @@ import static org.springframework.web.reactive.function.BodyInserters.fromObject
 public class ImageHandler {
 
     private final ImageUseCase imageUseCase;
-    private final ImageEntryMapper hanlderMapper;
+    private final ImageEntryMapper imageMapper;
+    private final ImageErrorEntryMapper imageErrorMapper;
 
     public final static String FILE_NAME = "file";
     public final static String ID_IMAGE = "id";
@@ -37,16 +40,20 @@ public class ImageHandler {
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
         return imageUseCase
                 .findById(serverRequest.pathVariable("id"))
-                .flatMap(hanlderMapper::toDto)
+                .flatMap(imageMapper::toDto)
                 .flatMap(image -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(image)))
-                .onErrorResume(error -> ServerResponse.notFound().build());
+                .onErrorResume(error -> {
+                    ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
+                    LOGGER.error(errorDto.toString());
+                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                });
     }
 
     @SuppressWarnings("deprecation")
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
         return imageUseCase
                 .findAll()
-                .flatMap(hanlderMapper::toDto)
+                .flatMap(imageMapper::toDto)
                 .collectList()
                 .flatMap(images -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(images)));
     }
@@ -65,7 +72,11 @@ public class ImageHandler {
         return imageUseCase
                 .deleteById(serverRequest.pathVariable("id"))
                 .flatMap(response -> ServerResponse.noContent().build())
-                .onErrorResume(error -> ServerResponse.notFound().build());
+                .onErrorResume(error -> {
+                    ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
+                    LOGGER.error(errorDto.toString());
+                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                });
     }
 
     protected Mono<ServerResponse> saveOrUpdate(ServerRequest serverRequest, String id){
@@ -80,10 +91,10 @@ public class ImageHandler {
                                 FileHandler fileHandler = new FileHandler();
                                 return fileHandler.fileToImage(file, id);
                             })
-                            .flatMap(hanlderMapper::toDomain)
+                            .flatMap(imageMapper::toDomain)
                             .flatMap(imageDomain ->
                                     imageUseCase.save(imageDomain)
-                                            .flatMap(hanlderMapper::toDto)
+                                            .flatMap(imageMapper::toDto)
                                             .flatMap(imageSave -> {
                                                 if(id == null)
                                                     return ServerResponse
@@ -97,8 +108,9 @@ public class ImageHandler {
                                             }));
 
                 }) .onErrorResume(error -> {
-                    LOGGER.error(error.getMessage());
-                    return ServerResponse.badRequest().body(fromObject(error));
+                    ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
+                    LOGGER.error(errorDto.toString());
+                    return ServerResponse.badRequest().body(fromObject(errorDto));
                 });
          }
 }

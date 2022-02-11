@@ -11,27 +11,27 @@ public class ImageEntryMapperImpl implements ImageEntryMapper {
     public Mono<Image> toDomain(ImageDto imageDto) {
         if(imageDto == null)
             return Mono.empty();
-        return Mono.just(new Image())
-                .flatMap(image-> {
-                    image.setId(imageDto.getId());
-                    image.setFilename(imageDto.getFilename());
-                    image.setContentType(imageDto.getContentType());
-                    image.setContent(imageDto.getContent());
-                    return Mono.just(image);
-                });
+        return Mono.just(
+                    Image.builder()
+                            .id(imageDto.getId())
+                            .filename(imageDto.getFilename())
+                            .contentType(imageDto.getContentType())
+                            .content(imageDto.getContent())
+                            .build()
+                );
     }
 
     @Override
     public Mono<ImageDto> toDto(Image image) {
         if(image == null)
             return Mono.empty();
-        return Mono.just(new ImageDto())
-                .flatMap(imageDto-> {
-                    imageDto.setId(image.getId());
-                    imageDto.setFilename(image.getFilename());
-                    imageDto.setContentType(image.getContentType());
-                    imageDto.setContent(image.getContent());
-                    return Mono.just(imageDto);
-                });
+        return Mono.just(
+                    ImageDto.builder()
+                                .id(image.getId())
+                                .filename(image.getFilename())
+                                .contentType(image.getContentType())
+                                .content(image.getContent())
+                                .build()
+                );
     }
 }

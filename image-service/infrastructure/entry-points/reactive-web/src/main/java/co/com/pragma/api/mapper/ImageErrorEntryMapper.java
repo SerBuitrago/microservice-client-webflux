@@ -5,5 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface ImageErrorEntryMapper {
 
-    Mono<ErrorDto> toDto(Exception exception);
+    Mono<ErrorDto> toDto(Throwable exception);
 }

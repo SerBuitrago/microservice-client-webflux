@@ -27,7 +27,7 @@ public class ImageRouter {
         return route(GET(FIND_BY_ID), handler::findById)
                 .andRoute(GET(FIND_ALL), handler::findAll)
                 .andRoute(POST(SAVE), handler::save)
-                .andRoute(PUT(UPDATE_BY_ID), handler::update)
+                .andRoute(PUT(UPDATE_BY_ID), handler::updateById)
                 .andRoute(DELETE(DELETE_BY_ID), handler::deleteById);
     }
 }

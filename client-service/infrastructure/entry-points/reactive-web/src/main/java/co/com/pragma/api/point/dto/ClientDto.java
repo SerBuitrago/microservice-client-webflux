@@ -2,6 +2,7 @@ package co.com.pragma.api.point.dto;
 
 import co.com.pragma.model.TypeDocument;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ClientDto {
 
     private String id;
@@ -32,4 +34,6 @@ public class ClientDto {
 
     @NotEmpty(message = "El campo ciudad de nacimiento es obligatorio.")
     private String birthCity;
+
+    private String idImage;
 }

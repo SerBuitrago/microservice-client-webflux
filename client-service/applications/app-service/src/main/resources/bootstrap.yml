@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: client-service
+  devtools:
+    add-properties: false
+  profiles:
+    include: null
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8090
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -8,37 +8,37 @@ import reactor.core.publisher.Mono;
 public class ClientEntryMapperImpl implements ClientEntryMapper {
     @Override
     public Mono<Client> toDocument(ClientDto clientDto) {
-        return Mono.just(clientDto)
-                .flatMap(clientDtoMap ->{
-                    if(clientDtoMap == null)
-                        return Mono.empty();
-                    Client client = new Client();
-                    client.setId(clientDtoMap.getId());
-                    client.setName(clientDtoMap.getName());
-                    client.setLastName(clientDtoMap.getLastName());
-                    client.setDocument(clientDtoMap.getDocument());
-                    client.setTypeDocument(clientDtoMap.getTypeDocument());
-                    client.setAge(clientDtoMap.getAge());
-                    client.setBirthCity(clientDtoMap.getBirthCity());
-                    return Mono.just(client);
-                });
+        if(clientDto == null)
+            return Mono.empty();
+        return Mono.just(
+                    Client.builder()
+                            .id(clientDto.getId())
+                            .name(clientDto.getName())
+                            .lastName(clientDto.getLastName())
+                            .document(clientDto.getDocument())
+                            .typeDocument(clientDto.getTypeDocument())
+                            .age(clientDto.getAge())
+                            .birthCity(clientDto.getBirthCity())
+                            .idImage(clientDto.getIdImage())
+                            .build()
+                );
     }
 
     @Override
     public Mono<ClientDto> toDto(Client client) {
-        return  Mono.just(client)
-                .flatMap(clientMap ->{
-                    if(clientMap == null)
-                        return Mono.empty();
-                    ClientDto clientDto = new ClientDto();
-                    clientDto.setId(clientMap.getId());
-                    clientDto.setName(clientMap.getName());
-                    clientDto.setLastName(clientMap.getLastName());
-                    clientDto.setDocument(clientMap.getDocument());
-                    clientDto.setTypeDocument(clientMap.getTypeDocument());
-                    clientDto.setAge(clientMap.getAge());
-                    clientDto.setBirthCity(clientMap.getBirthCity());
-                    return Mono.just(clientDto);
-                });
+        if(client == null)
+            return Mono.empty();
+        return Mono.just(
+                ClientDto.builder()
+                        .id(client.getId())
+                        .name(client.getName())
+                        .lastName(client.getLastName())
+                        .document(client.getDocument())
+                        .typeDocument(client.getTypeDocument())
+                        .age(client.getAge())
+                        .birthCity(client.getBirthCity())
+                        .idImage(client.getIdImage())
+                        .build()
+        );
     }
 }

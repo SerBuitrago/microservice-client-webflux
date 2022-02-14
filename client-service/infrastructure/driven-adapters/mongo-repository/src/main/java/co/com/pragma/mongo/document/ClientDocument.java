@@ -2,6 +2,7 @@ package co.com.pragma.mongo.document;
 
 import co.com.pragma.model.TypeDocument;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Document(collection = "client")
 public class ClientDocument {
 
@@ -23,4 +25,6 @@ public class ClientDocument {
     private TypeDocument typeDocument;
     private Integer age;
     private String birthCity;
+
+    private String idImage;
 }

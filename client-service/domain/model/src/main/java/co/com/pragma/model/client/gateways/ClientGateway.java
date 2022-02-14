@@ -1,22 +1,21 @@
 package co.com.pragma.model.client.gateways;
 
+import co.com.pragma.model.TypeDocument;
 import co.com.pragma.model.client.Client;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ClientRepository {
+public interface ClientGateway {
 
     Mono<Client> findById(String id);
 
-    Mono<Client> findByTypeDocumentAndDocument(String typeDocument, String document);
+    Mono<Client> findByTypeDocumentAndDocument(TypeDocument typeDocument, Long document);
 
     Flux<Client> findAll();
 
-    Flux<Client> findByAgeAll(String age);
+    Flux<Client> findByAgeAll(Integer age);
 
     Mono<Client> save(Client client);
-
-    Mono<Client> update(Client client);
 
     Mono<Void> deleteById(String id);
 

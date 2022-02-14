@@ -20,4 +20,5 @@ public class Client {
     private TypeDocument typeDocument;
     private Integer age;
     private String birthCity;
+    private String idImage;
 }

@@ -2,6 +2,7 @@ package co.com.pragma.api.point.handler;
 
 import co.com.pragma.api.point.dto.ClientDto;
 import co.com.pragma.api.mapper.ClientEntryMapper;
+import co.com.pragma.model.TypeDocument;
 import co.com.pragma.usecase.client.ClientUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -45,7 +46,7 @@ public class ClientHandler {
 
     public Mono<ServerResponse> findByTypeDocumentAndDocument(ServerRequest serverRequest) {
         return clientUseCase
-                .findByTypeDocumentAndDocument(serverRequest.pathVariable("typeDocument"), serverRequest.pathVariable("document"))
+                .findByTypeDocumentAndDocument(TypeDocument.valueOf(serverRequest.pathVariable("typeDocument")), Long.parseLong(serverRequest.pathVariable("document")))
                 .flatMap(clientHandlerMapper::toDto)
                 .flatMap(client ->
                         ServerResponse
@@ -70,7 +71,7 @@ public class ClientHandler {
     }
 
     public Mono<ServerResponse> findByAgeAll(ServerRequest serverRequest){
-        return clientUseCase.findByAgeAll(serverRequest.pathVariable("age"))
+        return clientUseCase.findByAgeAll(Integer.parseInt(serverRequest.pathVariable("age")))
                 .flatMap(clientHandlerMapper::toDto)
                 .collectList()
                 .flatMap(clients ->

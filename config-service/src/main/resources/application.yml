@@ -1,0 +1,12 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/SerBuitrago/microservice-client-webflux.git
+          search-paths: config-service-data
+          default-label: main

@@ -7,15 +7,18 @@ import reactor.core.publisher.Mono;
 
 public class ImageErrorEntryMapperImpl implements ImageErrorEntryMapper {
 
+    private final Integer indexStackTrace = 0;
+    private final Integer code = 400;
+
     @Override
     public Mono<ErrorDto> toDto(Throwable exception) {
         return Mono
-                .just(exception.getStackTrace()[0])
+                .just(exception.getStackTrace()[indexStackTrace])
                 .flatMap(stackTraceElement ->
                         Mono.just(
                                 ErrorDto.builder()
                                         .message( exception.getMessage())
-                                        .code(400)
+                                        .code(code)
                                         .lineNumber(stackTraceElement.getLineNumber())
                                         .fileName(stackTraceElement.getFileName())
                                         .methodName(stackTraceElement.getMethodName())

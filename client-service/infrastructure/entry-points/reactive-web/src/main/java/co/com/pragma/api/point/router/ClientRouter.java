@@ -12,16 +12,24 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration
 public class ClientRouter {
 
-    public static final String pathClient = "/api/client";
+    public static final String PATH = "/api/client";
+
+    public static final String FIND_BY_ID = PATH.concat("/{id}");
+    public static final String FIND_BY_TYPE_DOCUMENT_AND_DOCUMENT = PATH.concat("/find/type/{type}/document/{document}");
+    public static final String FIND_ALL = PATH;
+    public static final String FIND_BY_AGE_ALL = PATH.concat("/all/find/age/{age}");
+    public static final String SAVE = PATH;
+    public static final String UPDATE_BY_ID = PATH.concat("/{id}");
+    public static final String DELETE_BY_ID = PATH.concat("/{id}");
 
     @Bean
     public RouterFunction<ServerResponse> routerFunction(ClientHandler handler) {
-        return route(GET(pathClient.concat("/{id}")), handler::findById)
-                .andRoute(GET(pathClient.concat("/find/type/{type}/document/{document}")), handler::findByTypeDocumentAndDocument)
-                .andRoute(GET(pathClient), handler::findAll)
-                .andRoute(GET(pathClient.concat("/all/find/age/{age}")), handler::findByAgeAll)
-                .andRoute(POST(pathClient), handler::save)
-                .andRoute(PUT(pathClient), handler::update)
-                .andRoute(DELETE(pathClient.concat("/{id}")), handler::deleteById);
+        return route(GET(FIND_BY_ID), handler::findById)
+                .andRoute(GET(FIND_BY_TYPE_DOCUMENT_AND_DOCUMENT), handler::findByTypeDocumentAndDocument)
+                .andRoute(GET(FIND_ALL), handler::findAll)
+                .andRoute(GET(FIND_BY_AGE_ALL), handler::findByAgeAll)
+                .andRoute(POST(SAVE), handler::save)
+                .andRoute(PUT(UPDATE_BY_ID), handler::updateById)
+                .andRoute(DELETE(DELETE_BY_ID), handler::deleteById);
     }
 }

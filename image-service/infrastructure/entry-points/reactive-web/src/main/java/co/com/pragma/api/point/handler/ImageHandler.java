@@ -64,7 +64,7 @@ public class ImageHandler {
     }
 
     @SuppressWarnings("deprecation")
-    public Mono<ServerResponse> update(ServerRequest serverRequest) {
+    public Mono<ServerResponse> updateById(ServerRequest serverRequest) {
         return saveOrUpdate(serverRequest, serverRequest.pathVariable(ID_IMAGE));
     }
 

@@ -1,7 +1,9 @@
 buildscript {
 	ext {
 		cleanArchitectureVersion = '2.2.0'
-		springBootVersion = '2.6.2'
+		springBootVersion = '2.6.3'
+        springCloudVersion = '2021.0.0'
+        springCloudVersionDepedencie = '3.1.0'
 		sonarVersion = '3.0'
 		jacocoVersion = '0.8.5'
         lombokVersion = '1.18.22'
@@ -11,8 +13,15 @@ buildscript {
 plugins {
 	id 'co.com.bancolombia.cleanArchitecture' version "${cleanArchitectureVersion}"
 	id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'org.sonarqube' version "${sonarVersion}"
 	id 'jacoco'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 sonarqube {

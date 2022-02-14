@@ -2,7 +2,6 @@ package co.com.pragma.mongo.adapter.impl;
 
 import co.com.pragma.model.image.Image;
 import co.com.pragma.model.image.gateways.ImageGateway;
-import co.com.pragma.mongo.document.ImageDocument;
 import co.com.pragma.mongo.adapter.ImageMongoRepositoryAdapter;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class ImageMongoRepositoryAdapterImpl implements ImageGateway {
                 .doOnNext(image -> LOGGER.info(image.toString()))
                 .flatMap(image -> {
                     if(image.getId() == null)
-                        return Mono.error(new Exception("No existe ninguna imagen con el id ".concat(id)));
+                        return Mono.error(new Exception(String.format("No existe ninguna imagen con el id {0}.", id)));
                     return Mono.just(image);
                 });
     }
@@ -48,7 +47,7 @@ public class ImageMongoRepositoryAdapterImpl implements ImageGateway {
                 .defaultIfEmpty(new Image())
                 .flatMap(imageAction -> {
                     if(imageAction.getId() == null)
-                        return Mono.error(new Exception("No se ha ".concat(messageSaveOrUpdate(image).block()).concat(" imagen.")));
+                        return Mono.error(new Exception(String.format("No se ha {0} imagen.", messageSaveOrUpdate(image).block())));
                     return Mono.just(imageAction);
                 });
     }

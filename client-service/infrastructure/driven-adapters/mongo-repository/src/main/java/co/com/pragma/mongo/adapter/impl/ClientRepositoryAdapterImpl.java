@@ -4,6 +4,8 @@ import co.com.pragma.model.TypeDocument;
 import co.com.pragma.model.client.Client;
 import co.com.pragma.model.client.gateways.ClientGateway;
 import co.com.pragma.mongo.adapter.ClientRepositoryAdapter;
+import co.com.pragma.mongo.feign.ImageFeignClient;
+import co.com.pragma.mongo.feign.dto.ImageDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class ClientRepositoryAdapterImpl implements ClientGateway {
 
     private final ClientRepositoryAdapter clientRepositoryAdapter;
+    private final ImageFeignClient imageFeignClient;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ClientRepositoryAdapterImpl.class);
 
@@ -28,7 +31,7 @@ public class ClientRepositoryAdapterImpl implements ClientGateway {
                 .flatMap(client -> {
                     if(client.getId() == null)
                         return Mono.error(new Exception(String.format("No existe ningun cliente con el id {0}.", id)));
-                    return Mono.just(client);
+                    return findImageClient(client);
                 });
     }
 
@@ -43,20 +46,22 @@ public class ClientRepositoryAdapterImpl implements ClientGateway {
                         return Mono.error(new Exception(
                                 String.format("No existe ningun cliente con el tipo de documento {0} y documento {1}.", typeDocument.name(), document))
                         );
-                    return Mono.just(client);
+                    return findImageClient(client);
                 });
     }
 
     @Override
     public Flux<Client> findAll() {
         return clientRepositoryAdapter
-                .findAll();
+                .findAll()
+                .flatMap(this::findImageClient);
     }
 
     @Override
     public Flux<Client> findByAgeAll(Integer age) {
         return clientRepositoryAdapter
-                .findByAgeAll(age);
+                .findByAgeAll(age)
+                .flatMap(this::findImageClient);
     }
 
     @Override
@@ -76,7 +81,11 @@ public class ClientRepositoryAdapterImpl implements ClientGateway {
     @Override
     public Mono<Void> deleteById(String id) {
         return findById(id)
-                .then(clientRepositoryAdapter.deleteById(id).then());
+                .flatMap(client -> imageFeignClient
+                                        .deleteById(client.getIdImage())
+                                        .then(clientRepositoryAdapter.deleteById(client.getId()).then())
+                                        .onErrorResume(Mono::error)
+                ).onErrorResume(Mono::error);
     }
 
     protected Mono<Client> update(Client client) {
@@ -93,5 +102,27 @@ public class ClientRepositoryAdapterImpl implements ClientGateway {
         return Mono.just(client)
                 .defaultIfEmpty(new Client())
                 .map(clientValidate -> clientValidate.getId() != null ? "actualizado" : "regsitrado");
+    }
+
+    protected Mono<ImageDto> findImageById(String id){
+        if(id == null)
+            return Mono.empty();
+        return imageFeignClient
+                .findById(id)
+                .defaultIfEmpty(new ImageDto());
+    }
+
+    protected Mono<Client> findImageClient(Client client){
+        return Mono.just(client)
+                .defaultIfEmpty(new Client())
+                .flatMap(clientValidate -> {
+                    if(clientValidate.getIdImage() == null)
+                        return Mono.just(clientValidate);
+                    return findImageById(clientValidate.getIdImage())
+                            .flatMap(image -> {
+                                clientValidate.setIdImage(image.getId());
+                                return Mono.just(clientValidate);
+                            });
+                });
     }
 }

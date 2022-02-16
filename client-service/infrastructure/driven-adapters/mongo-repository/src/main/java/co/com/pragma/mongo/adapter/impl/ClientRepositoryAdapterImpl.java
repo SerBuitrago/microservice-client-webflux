@@ -109,7 +109,8 @@ public class ClientRepositoryAdapterImpl implements ClientGateway {
             return Mono.empty();
         return imageFeignClient
                 .findById(id)
-                .defaultIfEmpty(new ImageDto());
+                .defaultIfEmpty(new ImageDto())
+                .doOnNext(image -> LOGGER.info(image.toString()));
     }
 
     protected Mono<Client> findImageClient(Client client){

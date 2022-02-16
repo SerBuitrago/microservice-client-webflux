@@ -21,20 +21,12 @@ public class FileHandler {
                 });
     }
 
-    @SuppressWarnings("deprecation")
-    public Mono<ImageDto> fileToImage(FilePart file){
-        return fileToImage(file, null);
-    }
-
     public Mono<ImageDto> fileToImage(FilePart file, String id){
-        return Mono.just(new ImageDto())
-                .flatMap(imageDto -> {
-                    byte [] imageByte = fileToByte(file).toProcessor().block();
-                    imageDto.setId(id);
-                    imageDto.setContent(Base64.getEncoder().encodeToString(imageByte));
-                    imageDto.setFilename(file.filename());
-                    imageDto.setContentType(file.headers().getContentType().toString());
-                    return Mono.just(imageDto);
-                });
+        return Mono.just(ImageDto.builder()
+                        .id(id)
+                        .content(Base64.getEncoder().encodeToString(fileToByte(file).toProcessor().block()))
+                        .filename(file.filename())
+                        .contentType(file.headers().getContentType().toString())
+                        .build());
     }
 }

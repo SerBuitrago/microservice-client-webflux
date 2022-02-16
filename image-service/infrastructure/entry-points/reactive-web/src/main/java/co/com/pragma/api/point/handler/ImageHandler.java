@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 import static co.com.pragma.api.point.router.ImageRouter.PATH;
-import static org.springframework.web.reactive.function.BodyInserters.fromObject;
+import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 @RequiredArgsConstructor
 @Component
@@ -36,46 +36,42 @@ public class ImageHandler {
 
     public final static Logger LOGGER = LoggerFactory.getLogger(ImageHandler.class);
 
-    @SuppressWarnings("deprecation")
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
         return imageUseCase
-                .findById(serverRequest.pathVariable("id"))
+                .findById(serverRequest.pathVariable(ID_IMAGE))
                 .flatMap(imageMapper::toDto)
-                .flatMap(image -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(image)))
+                .flatMap(image -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromValue(image)))
                 .onErrorResume(error -> {
                     ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
                     LOGGER.error(errorDto.toString());
-                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                    return ServerResponse.badRequest().body(fromValue(errorDto));
                 });
     }
 
-    @SuppressWarnings("deprecation")
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
         return imageUseCase
                 .findAll()
                 .flatMap(imageMapper::toDto)
                 .collectList()
-                .flatMap(images -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromObject(images)));
+                .flatMap(images -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(fromValue(images)));
     }
 
-    @SuppressWarnings("deprecation")
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
         return saveOrUpdate(serverRequest, null);
     }
 
-    @SuppressWarnings("deprecation")
     public Mono<ServerResponse> updateById(ServerRequest serverRequest) {
         return saveOrUpdate(serverRequest, serverRequest.pathVariable(ID_IMAGE));
     }
 
     public Mono<ServerResponse> deleteById(ServerRequest serverRequest) {
         return imageUseCase
-                .deleteById(serverRequest.pathVariable("id"))
+                .deleteById(serverRequest.pathVariable(ID_IMAGE))
                 .flatMap(response -> ServerResponse.noContent().build())
                 .onErrorResume(error -> {
                     ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
                     LOGGER.error(errorDto.toString());
-                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                    return ServerResponse.badRequest().body(fromValue(errorDto));
                 });
     }
 
@@ -100,17 +96,17 @@ public class ImageHandler {
                                                     return ServerResponse
                                                             .created(URI.create(PATH.concat("/").concat(imageSave.getId())))
                                                             .contentType(MediaType.APPLICATION_JSON_UTF8)
-                                                            .body(fromObject(imageSave));
+                                                            .body(fromValue(imageSave));
                                                 return ServerResponse
                                                         .ok()
                                                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                                                        .body(fromObject(imageSave));
+                                                        .body(fromValue(imageSave));
                                             }));
 
                 }) .onErrorResume(error -> {
                     ErrorDto errorDto = imageErrorMapper.toDto(error).toProcessor().block();
                     LOGGER.error(errorDto.toString());
-                    return ServerResponse.badRequest().body(fromObject(errorDto));
+                    return ServerResponse.badRequest().body(fromValue(errorDto));
                 });
-         }
+    }
 }

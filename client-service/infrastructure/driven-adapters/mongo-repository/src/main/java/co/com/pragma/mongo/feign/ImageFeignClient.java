@@ -1,17 +1,18 @@
 package co.com.pragma.mongo.feign;
 
+import co.com.pragma.mongo.feign.config.FeignConfig;
 import co.com.pragma.mongo.feign.dto.ImageDto;
+
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
 
-import static co.com.pragma.mongo.feign.config.FeignConfig.*;
+import static co.com.pragma.mongo.feign.config.FeignUtil.*;
 
-@Component
-@ReactiveFeignClient(name = IMAGE_SERVICE)
+
+@ReactiveFeignClient(name = IMAGE_SERVICE, path = IMAGE_ENDPOINT, url = IMAGE_SERVICE_HOST,configuration = FeignConfig.class)
 public interface ImageFeignClient {
 
     @GetMapping(value = IMAGE_ENDPOINT_FIND_BY_ID)

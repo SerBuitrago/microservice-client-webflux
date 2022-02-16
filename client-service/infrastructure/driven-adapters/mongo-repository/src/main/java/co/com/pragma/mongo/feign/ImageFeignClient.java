@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 import static co.com.pragma.mongo.feign.config.FeignUtil.*;
 
 
-@ReactiveFeignClient(name = IMAGE_SERVICE, configuration = FeignConfig.class)
+@ReactiveFeignClient(name = IMAGE_SERVICE, path = IMAGE_ENDPOINT, url = IMAGE_SERVICE_HOST,configuration = FeignConfig.class)
 public interface ImageFeignClient {
 
     @GetMapping(value = IMAGE_ENDPOINT_FIND_BY_ID)
